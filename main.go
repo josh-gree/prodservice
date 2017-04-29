@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"bytes"
 	"os"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
+
+var local = kingpin.Arg("local", "Running locally?").Bool()
 
 var log = logging.MustGetLogger("example")
 var format = logging.MustStringFormatter(
@@ -25,6 +28,7 @@ type Result struct{
 }
 
 func main(){
+	kingpin.Parse()
 
 	backend1 := logging.NewLogBackend(os.Stderr, "", 0)
 	backend1Formatter := logging.NewBackendFormatter(backend1, format)
@@ -80,5 +84,10 @@ func Listen() {
 	e := echo.New()
 
 	e.POST("/", Recivejob)
-	e.Start(":9000")
+	fmt.Println(*local)
+	if *local == true {
+		e.Start(":9000")
+	} else {
+		e.Start(":8000")
+	}
 }
