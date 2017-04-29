@@ -42,7 +42,12 @@ func Send(r Result) error {
 	data, err := json.Marshal(r)
 
 	// How to deal with name issues?? service only needs to know public location
-	publichost := "localhost:7000"
+	publichost := ""
+	if *local {
+		publichost = "localhost:7000"
+	} else {
+		publichost = "publicservice:8000"
+	}
 	_, err = http.Post(fmt.Sprintf("http://%s/result/",publichost),"application/json",bytes.NewBuffer(data))
 	if err != nil {
 		log.Error(err)
